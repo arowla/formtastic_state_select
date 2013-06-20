@@ -1,18 +1,17 @@
-module FormtasticStateSelect
+module Formtastic
+  module Inputs
 
-  def state_input(method, options)
-    raise "To use the :state input, please install the state_select plugin http://github.com/sprsquish/state_select" unless self.respond_to?(:state_select)
+    class StateInput
+      include Formtastic::Inputs::Base
+      def to_html
+        raise "To use the :state input, please install the state_select plugin http://github.com/sprsquish/state_select" unless builder.respond_to?(:state_select)
+        input_wrapping do
+          label_html <<
+          country = input_options.delete(:country) || 'US'
+          builder.state_select(method, country, input_options, input_html_options)
+        end
+      end
+    end
 
-    html_options = options.delete(:input_html) || {}
-    country = options.delete(:country) || 'US'
-
-    self.label(method, options_for_label(options)) <<
-      self.state_select(method, country, strip_formtastic_options(options), html_options)
   end
-
-end
-
-
-if Object.const_defined? "Formtastic"
-  Formtastic::SemanticFormBuilder.class_eval { include FormtasticStateSelect }
 end
